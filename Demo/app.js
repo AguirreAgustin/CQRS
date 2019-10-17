@@ -7,11 +7,6 @@ var list = {
     elementos: []
 };
 
-//list.elementos.push({descripcion:'Demostración'});
-list.elementos.push({descripcion:'Demostración1',posicion:0});
-list.elementos.push({descripcion:'Demostración2',posicion:1});
-list.elementos.push({descripcion:'Demostración3',posicion:2});
-
 app.engine('html', mustacheExpress());
 
 app.set('view engine', 'html');
@@ -36,6 +31,7 @@ app.get('/', function (req, res) {
 
 
 app.post('/', function (req, res) {
+
     if(req.body.descripcion == "eliminar"){
         command.eliminar(req.body.posicion);
     }
@@ -57,14 +53,20 @@ app.post('/', function (req, res) {
 
  
 
+// ------------------------------------------ OBJECT QUERY ---------------------------------------
+
 
 var query = {
 
+    // ------- METHOD QUERY 1
 
     mostrar (res){
 
         res.render('agus2.html', list);
     },
+
+    // ------- METHOD QUERY 2
+
     armarLista(unaLista,res){
 
         var nuevaLista = {
@@ -86,8 +88,11 @@ var query = {
 
 }
 
+// ------------------------------------------- OBJECT COMMAND ---------------------------------------
 
 var command = {
+
+    // ------- METHOD DELETE
 
     eliminar(reqbody){
         
@@ -96,12 +101,15 @@ var command = {
             list.elementos[i].posicion = i;
         }
     },
-    
+    // ------- METHOD ADD
+
     agregar(reqbody){
 
         list.elementos.push({descripcion:reqbody, posicion:list.elementos.length});
 
     },
+
+    // ------- METHOD MOVE UP    
 
     subir(reqbody){
         var aux = list.elementos[reqbody].descripcion;
@@ -113,6 +121,8 @@ var command = {
 
     },
 
+    // ------- METHOD MOVE DOWN
+
     bajar(reqbody){
         var aux2 = list.elementos[parseInt(reqbody)+parseInt(1)].descripcion;
         list.elementos[parseInt(reqbody)+parseInt(1)].descripcion = list.elementos[reqbody].descripcion ; 
@@ -121,6 +131,8 @@ var command = {
             list.elementos[i].posicion = i;
         }
     },
+
+    // ------- METHOD TURN
 
     darVuelta(){
         list.elementos.reverse();
