@@ -28,8 +28,6 @@ app.get('/', function (req, res) {
 
 
 
-
-
 app.post('/', function (req, res) {
 
     if(req.body.descripcion == "eliminar"){
@@ -51,7 +49,6 @@ app.post('/', function (req, res) {
     query.armarLista(list,res);
 })
 
- 
 
 // ------------------------------------------ OBJECT QUERY ---------------------------------------
 
@@ -92,53 +89,60 @@ var query = {
 
 var command = {
 
-    // ------- METHOD DELETE
+    // ------- METHOD REORGANIZATION
 
-    eliminar(reqbody){
-        
-        list.elementos.splice(reqbody,1);
+    reasignarPosiciones(){
+
         for(var i=0; i<list.elementos.length; i++){
             list.elementos[i].posicion = i;
         }
+
+    },
+
+    // ------- METHOD DELETE
+
+    eliminar(posicionElemento){
+        
+        list.elementos.splice(posicionElemento,1);
+
+        command.reasignarPosiciones();
+        
     },
     // ------- METHOD ADD
 
-    agregar(reqbody){
+    agregar(descripcionElemento){
 
-        list.elementos.push({descripcion:reqbody, posicion:list.elementos.length});
+        list.elementos.push({descripcion:descripcionElemento, posicion:list.elementos.length});
 
     },
 
     // ------- METHOD MOVE UP    
 
-    subir(reqbody){
-        var aux = list.elementos[reqbody].descripcion;
-        list.elementos[reqbody].descripcion = list.elementos[reqbody-1].descripcion ; 
-        list.elementos[reqbody-1].descripcion = aux;
-        for(var i=0; i<list.elementos.length; i++){
-            list.elementos[i].posicion = i;
-        }
+    subir(posicionElemento){
+        var aux = list.elementos[posicionElemento].descripcion;
+        list.elementos[posicionElemento].descripcion = list.elementos[posicionElemento-1].descripcion ; 
+        list.elementos[posicionElemento-1].descripcion = aux;
+        command.reasignarPosiciones();
+
 
     },
 
     // ------- METHOD MOVE DOWN
 
-    bajar(reqbody){
-        var aux2 = list.elementos[parseInt(reqbody)+parseInt(1)].descripcion;
-        list.elementos[parseInt(reqbody)+parseInt(1)].descripcion = list.elementos[reqbody].descripcion ; 
-        list.elementos[reqbody].descripcion = aux2;
-        for(var i=0; i<list.elementos.length; i++){
-            list.elementos[i].posicion = i;
-        }
+    bajar(posicionElemento){
+        var aux2 = list.elementos[parseInt(posicionElemento)+parseInt(1)].descripcion;
+        list.elementos[parseInt(posicionElemento)+parseInt(1)].descripcion = list.elementos[posicionElemento].descripcion ; 
+        list.elementos[posicionElemento].descripcion = aux2;
+        command.reasignarPosiciones();
+
     },
 
     // ------- METHOD TURN
 
     darVuelta(){
         list.elementos.reverse();
-        for(var i=0; i<list.elementos.length; i++){
-            list.elementos[i].posicion = i;
-        }
+        command.reasignarPosiciones();
+
     }
 }
 
