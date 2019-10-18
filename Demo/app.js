@@ -19,6 +19,9 @@ app.use(express.static(__dirname + '/wwwroot'))
 
 app.use(bodyParser.json());
 
+list.elementos.push({descripcion:'Task 1 Demo',posicion:0});
+list.elementos.push({descripcion:'Demo 2 Demo',posicion:1});
+list.elementos.push({descripcion:'Demo 3 Demo',posicion:2});
 
 app.get('/', function (req, res) {
 
@@ -26,13 +29,17 @@ app.get('/', function (req, res) {
 
 })
 
+app.get('/api/tarea/:posicion' , function(req ,res){
+
+    res.send(query.seleccionarPosicion(req.params.posicion));
+
+})
+
+
 
 
 app.post('/', function (req, res) {
-    var si = 0;
-    /*if(req.body.descripcion == "seleccionarTodo"){
-        query.seleccionarUltimo();
-    }*/
+
     if(req.body.descripcion == "eliminar"){
         command.eliminar(req.body.posicion);
     }
@@ -48,12 +55,10 @@ app.post('/', function (req, res) {
     }
     if(req.body.descripcion == "darVuelta"){
         command.darVuelta()
-        //query.seleccionarUltimo();
-        //si = 1;
     }
-    //if (si==0){
-    query.armarLista(list,res);
-    //}
+    command.reasignarPosicion()
+    res.render('agus2.html',query.seleccionarTodo());
+    
 })
 
 
@@ -62,46 +67,38 @@ app.post('/', function (req, res) {
 
 var query = {
 
+    // ------- METHOD SELECT ALL
+
     seleccionarTodo(){
 
         return list;
 
     },
 
+    // ------- METHOD SELECT SPECIFIC POSITION 
+
     seleccionarPosicion(posicion){
 
         return list.elementos[posicion];
     },
 
-    // ------- METHOD QUERY 
-    /*
-    seleccionarUltimo (){
-        app.get(function (req, res) {
-            var nuevaLista = {
-                element: []
-            };
-
-            nuevaLista.element[0].push(list.elementos[list.elementos.length-1]);
-            res.render('agus2.html', nuevaLista);
-        
-        })
-    },
-    */
-    // ------- METHOD QUERY 1
-    mostrar (res){
-
-        res.render('agus2.html',list);
     
-    },
 
-    // ------- METHOD QUERY 2
+}
 
-    armarLista(unaLista,res){
+// ------------------------------------------- OBJECT COMMAND ---------------------------------------
+
+var command = {
+
+    // ------------- METHOD REASIGN POSITION
+
+    reasignarPosicion(unaLista){
 
         var nuevaLista = {
             elementos: []
         };
-        
+        var unaLista = query.seleccionarTodo();
+
         for(var i=0; i<unaLista.elementos.length; i++){
         
             
@@ -112,14 +109,9 @@ var query = {
             visualizarbajar: (i != unaLista.elementos.length-1)})
         
         }
-        res.render('agus2.html', nuevaLista);
-    }
-
-}
-
-// ------------------------------------------- OBJECT COMMAND ---------------------------------------
-
-var command = {
+        list = nuevaLista;
+        query.seleccionarTodo();
+    },
 
     // ------- METHOD REORGANIZATION
 
