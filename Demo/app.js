@@ -22,14 +22,17 @@ app.use(bodyParser.json());
 
 app.get('/', function (req, res) {
 
-    query.mostrar(res);
+    res.render('agus2.html',query.seleccionarTodo());
 
 })
 
 
 
 app.post('/', function (req, res) {
-
+    var si = 0;
+    /*if(req.body.descripcion == "seleccionarTodo"){
+        query.seleccionarUltimo();
+    }*/
     if(req.body.descripcion == "eliminar"){
         command.eliminar(req.body.posicion);
     }
@@ -45,8 +48,12 @@ app.post('/', function (req, res) {
     }
     if(req.body.descripcion == "darVuelta"){
         command.darVuelta()
+        //query.seleccionarUltimo();
+        //si = 1;
     }
+    //if (si==0){
     query.armarLista(list,res);
+    //}
 })
 
 
@@ -55,11 +62,36 @@ app.post('/', function (req, res) {
 
 var query = {
 
-    // ------- METHOD QUERY 1
+    seleccionarTodo(){
 
+        return list;
+
+    },
+
+    seleccionarPosicion(posicion){
+
+        return list.elementos[posicion];
+    },
+
+    // ------- METHOD QUERY 
+    /*
+    seleccionarUltimo (){
+        app.get(function (req, res) {
+            var nuevaLista = {
+                element: []
+            };
+
+            nuevaLista.element[0].push(list.elementos[list.elementos.length-1]);
+            res.render('agus2.html', nuevaLista);
+        
+        })
+    },
+    */
+    // ------- METHOD QUERY 1
     mostrar (res){
 
-        res.render('agus2.html', list);
+        res.render('agus2.html',list);
+    
     },
 
     // ------- METHOD QUERY 2
